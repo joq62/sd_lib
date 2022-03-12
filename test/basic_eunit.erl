@@ -29,7 +29,7 @@ start()->
    % ok=t22_test(),
 %   ok=test3(),
  %   ok=test4(),
-  %  init:stop(),
+    init:stop(),
     ok.
 
 t1_test()->
@@ -44,6 +44,8 @@ t1_test()->
 t2_test()->
  %   ?debugVal(sd:get(rebar)),
     ?assert([test@c100]=:=sd:get(kernel)),
+    {ok,HostName}=inet:gethostname(),
+    [test@c100]=sd:get_host(kernel,HostName),
     ok.
 
 t22_test()->

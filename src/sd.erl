@@ -17,6 +17,7 @@
 %% --------------------------------------------------------------------
 %-compile(export_all).
 -export([
+	 get_host/2,
 	 call/5,
 	 cast/4,
 	 all/0,
@@ -91,3 +92,11 @@ get(WantedApp,WantedNode)->
 				Node==WantedNode],
     AvailableNodes.
 
+get_host(WantedApp,WantedHost)->
+    Apps=[{Node,rpc:call(Node,application,loaded_applications,[],5*1000)}||Node<-[node()|nodes()]],
+    AvailableNodes=[Node||{Node,AppList}<-Apps,
+				AppList/={badrpc,nodedown},
+				AppList/={badrpc,timeout},
+				true=:=lists:keymember(WantedApp,1,AppList),
+				inet:gethostname()=:={ok,WantedHost}],
+    AvailableNodes.
